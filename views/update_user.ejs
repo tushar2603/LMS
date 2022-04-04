@@ -1,0 +1,51 @@
+<%- include('partials/header'); -%>
+
+<!-- form handling -->
+<form method="POST" id="update_user">
+  <div class="new_user">
+    <div class="form-group">
+      <label for="email" class="text-light">Email</label>
+      <input type="text" name="email" value="<%= user.email%>" />
+    </div>
+
+    <div class="form-group">
+      <label for="password" class="text-light">Password</label>
+      <input type="password" name="password" />
+    </div>
+
+    <div class="form-group">
+      <button type="submit" class="btn text-dark update">Save</button>
+    </div>
+  </div>
+</form>
+
+<script>
+  const form = document.querySelector("form");
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    // get values
+    const email = form.email.value;
+    const password = form.password.value;
+
+    try {
+      const res = await fetch("/update_user/:id", {
+        method: "POST",
+        body: JSON.stringify({ email, password }),
+        headers: { "Content-Type": "application/json" },
+      });
+      const data = await res.json();
+      console.log(data);
+      if (data.errors) {
+        emailError.textContent = data.errors.email;
+        passwordError.textContent = data.errors.password;
+      }
+      if (data.user) {
+        location.assign("/");
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  });
+</script>
